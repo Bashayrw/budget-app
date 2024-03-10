@@ -1,5 +1,6 @@
 type ButtonProp = {
   name: string;
+  variant: string 
 };
 
 export function Button({ name }: ButtonProp) {

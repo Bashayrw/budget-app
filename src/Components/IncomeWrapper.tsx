@@ -1,61 +1,72 @@
-import { ChangeEvent, useState } from "react";
-import { IncomeForm } from "./IncomeForm";
+import { ChangeEvent, FormEvent, useState } from "react";
+import { Form } from "./Form";
+import { ListItem } from "@mui/material";
+import { ListItems } from "./ListItems";
 
-type Income = {
+export type Income = {
+  id: number
   source: string;
   amount: number;
-  date: string;
+  date: string | null ;
 };
+const INCOME_INPUTS = [
+  {
+    name: "source",
+    id: "source",
+    lable: "Income Source",
+  },
+  {
+    name: "amount",
+    id: "amount",
+    lable: "Income Amount",
+  },
+];
 
 export function IncomeWrapper() {
-  const [income, setIncome] = useState<Income[]>([]); //to collect the data and to store them in
-  const [source, setSource] = useState("");
-  const [amount, setAmount] = useState(0);
-  const [date, setDate] = useState(null);
+  const [incomes, setIncomes] = useState<Income[]>([]); //to collect the data and to store them in
+  console.log("incomes:", incomes)
+  const [income, setIncome] = useState<Income>({
+    id: Number(new Date()),
+    source: "",
+    amount: 0,
+    date: new Date().toLocaleDateString()
+  })
 
-  const handleChangeSource = (e: any) => {
-    const value = e.target.value;
-    setSource(value);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const {name, value}=e.target
+    setIncome({
+      ...income,
+      [name]:value,
+    })
   };
-  const handleChangeAmount = (e: any) => {
-    const value = e.target.value;
-    setAmount(value);
-  };
-  const handleChangeDate = (e: any) => {
-    const value = e.target.value;
-    setDate(value);
+  const handleChangeDate = (value: {$d:Date}) => {
+    setIncome({
+      ...income,
+      date: new Date(value.$d).toLocaleDateString(),
+    })
   };
 
-  const handleSubmit = (e: any) => {
+  const handleSubmit = (e:FormEvent) => {
     e.preventDefault();
     const newIncome = {
-      source: source,
-      amount: amount,
-      date: date,
+      id: Number(new Date()),
+      source: income.source,
+      amount: Number(income.amount),
+      date: income.date,
     };
-    setIncome([...income, newIncome]);
+    setIncomes([...incomes, newIncome]);
   };
 
   return (
     <>
-      <IncomeForm
-        handleChangeSource={handleChangeSource}
+      <Form
+        handleChange={handleChange}
         handleSubmit={handleSubmit}
-        handleChangeAmount={handleChangeAmount}
         handleChangeDate={handleChangeDate}
+        inputs={INCOME_INPUTS}
       />
+      <ListItems items={incomes}/>
 
-      <ul>
-        {income.map((income) => {
-          return (
-            <li>
-              <p>{income.source}</p>
-              <p>{income.amount}</p>
-              <p>{income.date}</p>
-            </li>
-          );
-        })}
-      </ul>
     </>
   );
 }
