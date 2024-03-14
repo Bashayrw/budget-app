@@ -1,13 +1,16 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { Form } from "./Form";
+import { Dayjs } from "dayjs";
+
 import { ListItem } from "@mui/material";
+
+import { Form } from "./Form";
 import { ListItems } from "./ListItems";
 
 export type Income = {
-  id: number
+  id: number;
   source: string;
   amount: number;
-  date: string | null ;
+  date: string | null;
 };
 const INCOME_INPUTS = [
   {
@@ -22,31 +25,42 @@ const INCOME_INPUTS = [
   },
 ];
 
-export function IncomeWrapper() {
-  const [incomes, setIncomes] = useState<Income[]>([]); //to collect the data and to store them in
-  console.log("incomes:", incomes)
+type IncomeWrapperProps = {
+  incomes: Income[];
+  setIncomes: (key: Income[]) => void;
+  handleDelete: (key: number) => void;
+};
+export function IncomeWrapper({
+  incomes,
+  setIncomes,
+  handleDelete,
+}: IncomeWrapperProps) {
+  //to collect the data and to store them in
   const [income, setIncome] = useState<Income>({
     id: Number(new Date()),
     source: "",
     amount: 0,
-    date: new Date().toLocaleDateString()
-  })
+    date: new Date().toLocaleDateString(),
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {name, value}=e.target
+    const { name, value } = e.target;
     setIncome({
       ...income,
-      [name]:value,
-    })
-  };
-  const handleChangeDate = (value: {$d:Date}) => {
-    setIncome({
-      ...income,
-      date: new Date(value.$d).toLocaleDateString(),
-    })
+      [name]: value,
+    });
   };
 
-  const handleSubmit = (e:FormEvent) => {
+  const handleChangeDate = (value: Dayjs | null) => {
+    if (value) {
+      setIncome({
+        ...income,
+        date: value.toDate().toLocaleDateString(),
+      });
+    }
+  };
+
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const newIncome = {
       id: Number(new Date()),
@@ -65,8 +79,7 @@ export function IncomeWrapper() {
         handleChangeDate={handleChangeDate}
         inputs={INCOME_INPUTS}
       />
-      <ListItems items={incomes}/>
-
+      <ListItems items={incomes} handleDelete={handleDelete} />
     </>
   );
 }

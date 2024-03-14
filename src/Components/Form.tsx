@@ -1,22 +1,23 @@
 //import { Button } from "./Button";
-import { Grid, TextField } from "@mui/material";
-import Button from "@mui/material/Button";
-import { LocalizationProvider, DatePicker } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { FormEvent } from "react";
+import { Dayjs } from "dayjs";
 
-type Input= {
-  name: string,
-    id: string,
-    lable: string,
-}
+import Button from "@mui/material/Button";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { Grid, TextField } from "@mui/material";
+
+type Input = {
+  name: string;
+  id: string;
+  lable: string;
+};
 type FormProps = {
   handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   handleSubmit: (e: FormEvent) => void;
-  handleChangeDate: (value: { $d: Date }) => void;
+  handleChangeDate: (value: Dayjs | null) => void;
   inputs: Input[];
 };
-
 
 export function Form({
   handleChange,

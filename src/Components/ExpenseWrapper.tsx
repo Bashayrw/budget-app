@@ -1,13 +1,16 @@
 import { ChangeEvent, FormEvent, useState } from "react";
-import { Form } from "./Form";
+import { Dayjs } from "dayjs";
+
 import { ListItem } from "@mui/material";
+
+import { Form } from "./Form";
 import { ListItems } from "./ListItems";
 
 export type Expense = {
-  id: number
+  id: number;
   source: string;
   amount: number;
-  date: string | null ;
+  date: string | null;
 };
 const EXPENSE_INPUTS = [
   {
@@ -21,31 +24,42 @@ const EXPENSE_INPUTS = [
     lable: "Expense Amount",
   },
 ];
+type ExpenseWrapperProps = {
+  expenses: Expense[];
+  setExpenses: (key: Expense[]) => void;
+  handleDelete: any;
+};
 
-export function ExpenseWrapper() {
-  const [expenses, setExpenses] = useState<Expense[]>([]); //to collect the data and to store them in
+export function ExpenseWrapper({
+  expenses,
+  setExpenses,
+  handleDelete,
+}: ExpenseWrapperProps) {
+  //to collect the data and to store them in
   const [expense, setExpense] = useState<Expense>({
     id: Number(new Date()),
     source: "",
     amount: 0,
-    date: new Date().toLocaleDateString()
-  })
+    date: new Date().toLocaleDateString(),
+  });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {name, value}=e.target
+    const { name, value } = e.target;
     setExpense({
       ...expense,
-      [name]:value,
-    })
+      [name]: value,
+    });
   };
-  const handleChangeDate = (value: {$d:Date}) => {
-    setExpense({
-      ...expense,
-      date: new Date(value.$d).toLocaleDateString(),
-    })
+  const handleChangeDate = (value: Dayjs | null) => {
+    if (value) {
+      setExpense({
+        ...expense,
+        date: value.toDate().toLocaleDateString(),
+      });
+    }
   };
 
-  const handleSubmit = (e:FormEvent) => {
+  const handleSubmit = (e: FormEvent) => {
     e.preventDefault();
     const newExpense = {
       id: Number(new Date()),
@@ -64,7 +78,7 @@ export function ExpenseWrapper() {
         handleChangeDate={handleChangeDate}
         inputs={EXPENSE_INPUTS}
       />
-      <ListItems items={expenses}/>
+      <ListItems items={expenses} handleDelete={handleDelete} />
     </>
-  )
+  );
 }
